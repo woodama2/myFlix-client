@@ -6,3 +6,7 @@
 3.  run application
     parcel src/index.html
     open the web browser at: http://localhost:1234
+4.  create components
+    main-view, movie-view, & movie-card
+5.  add hooks
+    useState, useEffect
