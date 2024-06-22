@@ -88,6 +88,16 @@ return (
         }
         />
         <Route
+            path="/profile"
+            element={
+              !user ? <Navigate to="/login" replace /> : (
+                <Col md={8}>
+                  <ProfileView user={user} onLoggedOut={() => { setUser(null); setToken(null); localStorage.clear(); }} />
+                </Col>
+              )
+            }
+          />
+        <Route
         path="/movies/:movieId"
         element={
           <>
