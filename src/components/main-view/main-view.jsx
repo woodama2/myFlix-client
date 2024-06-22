@@ -54,6 +54,7 @@ const handleLogout = () => {
   setUser(null);
   setToken(null);
   localStorage.clear();
+  onLoggedOut(); // Call this to propagate logout across components
 };
 
 return (
@@ -102,7 +103,7 @@ return (
             element={
               !user ? <Navigate to="/login" replace /> : (
                 <Col md={8}>
-                  <ProfileView user={user} onUserUpdate={handleUserUpdate} onLoggedOut={handleLogout} />
+                  <ProfileView user={storedUser} onUserUpdate={handleUserUpdate} onLoggedOut={handleLogout} />
                 </Col>
               )
             }

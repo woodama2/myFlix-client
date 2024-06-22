@@ -28,8 +28,9 @@ export const ProfileView = ({ user, onUserUpdate, onLoggedOut }) => {
     username: user.username,
     password: "",
     email: user.email,
-    birthday: user.birthday.split('T')[0]  //Extract date part only
+    birthday: user.birthday ? new Date(user.birthday).toISOString().split('T')[0] : '' // Extract date part only
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleEditModalOpen = () => setShowEditModal(true);
   const handleEditModalClose = () => setShowEditModal(false);
@@ -52,8 +53,9 @@ export const ProfileView = ({ user, onUserUpdate, onLoggedOut }) => {
     .then(response => response.json())
     .then(updatedUser => {
       if (updatedUser) {
+        localStorage.setItem('user', JSON.stringify(updatedUser));
         alert("Your profile has been updated successfully.");
-        onUserUpdate(updatedUser);
+        onUserUpdate(updatedUser); // Update state in MainView
         handleEditModalClose();
       } else {
         alert("An error occurred while updating your profile.");
@@ -69,6 +71,13 @@ export const ProfileView = ({ user, onUserUpdate, onLoggedOut }) => {
     const confirmDeregister = window.confirm(
       "Are you sure you want to delete your account?  This action cannot be undone."
     );
+  
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    onLoggedOut(); // Should clear localStorage
+    navigate("/login") // Redirect to login page
+  }
 
 
     if (confirmDeregister) {
@@ -99,13 +108,10 @@ export const ProfileView = ({ user, onUserUpdate, onLoggedOut }) => {
       <h2>My Profile</h2>
       <p>Username: {user.username}</p>
       <p>Email: {user.email}</p>
-      <p>Birthday: {new Date(user.birthday).toISOString().split('T')[0]}</p>
+      <p>Birthday: {user.birthday ? new Date(user.birthday).toISOString().split('T')[0] : 'Not specified'}</p>
       <p>Favorites: {user.favorites.join(", ")}</p>
       <Button variant="primary" onClick={handleEditModalOpen}>Edit Profile</Button>
-      <Button variant="secondary" onClick={() => {
-        onLoggedOut();
-        navigate("/login");
-      }}>Logout</Button>
+
       <Button variant="warning" onClick={handleDeregister}>Deregister</Button>
 
       <Modal show={showEditModal} onHide={handleEditModalClose}>
@@ -122,19 +128,28 @@ export const ProfileView = ({ user, onUserUpdate, onLoggedOut }) => {
                 value={formData.username}
                 onChange={handleFormChange}
                 required
+                minLength={3}
               />
             </Form.Group>
-            <Form.Group controlId="formPassword">
+            <Form.Group>
               <Form.Label>Password</Form.Label>
               <Form.Control
-                type="password"
+                type={showPassword ? "text" : "password"}
+                id="passwordInput"
                 name="password"
                 value={formData.password}
                 onChange={handleFormChange}
                 required
                 minLength={8}
               />
-            </Form.Group>.
+              <Form.Check
+                type="checkbox"
+                label="Show Password"
+                id="showPasswordCheck"
+                checked={showPassword}
+                onChange={() => setShowPassword(!showPassword)}
+              />
+            </Form.Group>
             <Form.Group controlId="formEmail">
               <Form.Label>Email</Form.Label>
               <Form.Control
@@ -152,7 +167,6 @@ export const ProfileView = ({ user, onUserUpdate, onLoggedOut }) => {
                 name="birthday"
                 value={formData.birthday}
                 onChange={handleFormChange}
-                required
               />
             </Form.Group>
             <Button variant="primary" type="submit">Save Changes</Button>
@@ -165,10 +179,10 @@ export const ProfileView = ({ user, onUserUpdate, onLoggedOut }) => {
 
 ProfileView.propTypes = {
   user: PropTypes.shape({
-    Username: PropTypes.string.isRequired,
-    Email: PropTypes.string.isRequired,
-    Birthday: PropTypes.string.isRequired,
-    Favorites: PropTypes.arrayOf(PropTypes.string).isRequired
+    username: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    birthday: PropTypes.string,
+    favorites: PropTypes.arrayOf(PropTypes.string)
   }).isRequired,
   onUserUpdate: PropTypes.func.isRequired,
   onLoggedOut: PropTypes.func.isRequired
