@@ -45,7 +45,17 @@ export const MainView = () => {
     });
   }, [token]);
 
-// Exercise 3.7
+const handleUserUpdate = (updatedUser) => {
+  setUser(updatedUser);
+  localStorage.setItem("user", JSON.stringify(updatedUser));
+};
+
+const handleLogout = () => {
+  setUser(null);
+  setToken(null);
+  localStorage.clear();
+};
+
 return (
   <BrowserRouter>
     <NavigationBar
@@ -92,7 +102,7 @@ return (
             element={
               !user ? <Navigate to="/login" replace /> : (
                 <Col md={8}>
-                  <ProfileView user={user} onLoggedOut={() => { setUser(null); setToken(null); localStorage.clear(); }} />
+                  <ProfileView user={user} onUserUpdate={handleUserUpdate} onLoggedOut={handleLogout} />
                 </Col>
               )
             }
