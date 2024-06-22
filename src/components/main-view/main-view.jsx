@@ -103,7 +103,10 @@ return (
             element={
               !user ? <Navigate to="/login" replace /> : (
                 <Col md={8}>
-                  <ProfileView user={storedUser} onUserUpdate={handleUserUpdate} onLoggedOut={handleLogout} />
+                  <ProfileView 
+                  user={user} 
+                  onUserUpdate={handleUserUpdate} 
+                  onLoggedOut={handleLogout} />
                 </Col>
               )
             }
@@ -118,7 +121,10 @@ return (
               <Col>The list is empty!</Col>
             ) : (
               <Col md={8}>
-                <MovieView movies={movies} />
+                <MovieView 
+                movies={movies} 
+                user={user} 
+                onUserUpdate={handleUserUpdate} />
               </Col>
             )}
           </>
@@ -136,7 +142,10 @@ return (
               <>
                 {movies.map((movie) => (
                   <Col className="mb-4" key={movie.id} md={3}>
-                    <MovieCard movie={movie} />
+                    <MovieCard 
+                    movie={movie} 
+                    user={user} 
+                    onUserUpdate={handleUserUpdate} />
                   </Col>
                 ))}
               </>

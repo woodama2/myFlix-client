@@ -18,7 +18,8 @@ import { useNavigate } from "react-router-dom";
 //   return `${month}/${day}/${year}`;
 // };
 
-export const ProfileView = ({ user, onUserUpdate, onLoggedOut }) => {
+export const ProfileView = ({ onUserUpdate, onLoggedOut }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   // const user = JSON.parse(localStorage.getItem("user"));
