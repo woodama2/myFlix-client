@@ -6,6 +6,7 @@ export const SignupView = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -25,7 +26,7 @@ export const SignupView = () => {
     }).then((response) => {
       if (response.ok) {
         alert("Signup successful");
-        window.location.reload();
+        window.location.href = "/";
       } else {
         alert("Signup failed");
       }
@@ -78,14 +79,22 @@ export const SignupView = () => {
         minLength={3}
         />
       </Form.Group>
-      <Form.Group controlId="formPassword">
+      <Form.Group>
         <Form.Label>Password:</Form.Label>
         <Form.Control
-        type="password"
+        type={showPassword ? "text" : "password"}
+        id="passwordInput"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
         minLength={8}
+        />
+        <Form.Check
+        type="checkbox"
+        label="Show Password"
+        id="showPasswordCheck"
+        checked={showPassword}
+        onChange={() => setShowPassword(!showPassword)}
         />
       </Form.Group>
       <Form.Group controlId="formEmail">
