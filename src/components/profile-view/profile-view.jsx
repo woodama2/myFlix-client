@@ -1,12 +1,8 @@
 // src/components/profile-view/profile-view.jsx
-import React, {useState } from "react";
+import React, {useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { useParams } from "react-router-dom";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal"
-// import { Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Card, Button, Col, Row, Form, Modal } from "react-bootstrap";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 
 // Helper function to format date
@@ -18,10 +14,11 @@ import { useNavigate } from "react-router-dom";
 //   return `${month}/${day}/${year}`;
 // };
 
-export const ProfileView = ({ onUserUpdate, onLoggedOut }) => {
+export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const { movieId } = useParams();
   // const user = JSON.parse(localStorage.getItem("user"));
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -32,6 +29,92 @@ export const ProfileView = ({ onUserUpdate, onLoggedOut }) => {
     birthday: user.birthday ? new Date(user.birthday).toISOString().split('T')[0] : '' // Extract date part only
   });
   const [showPassword, setShowPassword] = useState(false);
+  // const [favoriteMovies, setFavoriteMovies] = useState([]);
+
+  // const favoriteMovies = movies.filter(m => user.favorites.includes(m._id));
+
+  // useEffect(() => {
+  //   const fetchFavoriteMovies = async () => {
+  //     if (user.favorites.length > 0) {
+  //       try {
+  //         const promises = user.favorites.map((movieId) =>
+  //       fetch(`https://stark-eyrie-86274-1237014d10af.herokuapp.com/movies/`, {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       })
+  //       .then(response => {
+  //         if (!response.ok) {
+  //           throw new Error('Failed to fetch movie');
+  //         }
+  //         return response.json();
+  //       })
+  //       .catch(error => {
+  //         console.error("Error fetching movie detauls:", error);
+  //         return null;
+  //       })
+  //     );
+  //     const movieDetails = await Promise.all(promises);
+  //     setFavoriteMovies(movieDetails.filter(movie => movie !== null));
+  //       } catch (error) {
+  //         console.error("Error fetching movie details:", error);
+  //       }
+  //     }
+  //   };
+
+  //   fetchFavoriteMovies();
+  // }, [user.favorites, token]);
+
+  // useEffect(() => {
+  //   if (user.favorites.length > 0) {
+  //     // Map the array of movie IDs to fetch requests
+  //     const fetchPromises = user.favorites.map((movieId) =>
+  //   fetch(`https://stark-eyrie-86274-1237014d10af.herokuapp.com/movies/${encodeURIComponent(movieId)}`, {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     }
+  //   })
+  //   .then(response => {
+  //     if (!response.ok) {
+  //       throw new Error('Failed to fetch movie');
+  //     }
+  //     return response.json();
+  //   })
+  //   .catch(error => {
+  //     console.error("Error fetching movie details:", error);
+  //     return null;
+  //   })
+  // );
+
+  // Execute all fetch requests and handle them together
+  // const movieDetails = await Promise.all(fetchPromises)
+  // .then((movieDetails) => {
+  //   // Filter out any null responses
+  //   const filteredMovies = movieDetails.filter(movie => movie !== null);
+  //   // Update state with all fetch movies at once
+  //   setFavoriteMovies(filteredMovies);
+  // })
+  // .catch((error) => {
+  //   console.error("Error fetching movies:", error);
+  // });
+  //   } else {
+  //     // If user has no favorites, set favoriteMovies to an empty array
+  //     setFavoriteMovies([]);
+  //   }
+
+  // //     Promise.all(user.favorites.map((movieId) =>
+  // //   fetch(`https://stark-eyrie-86274-1237014d10af.herokuapp.com/movies/`, {
+  // //     headers: {
+  // //       Authorization: `Bearer ${token}`,
+  // //     }
+  // //   })
+  // //   .then((response) => response.json())
+  // //   .catch((error) => console.error("Error fetching movie details:", error))
+  // // )).then(setFavoriteMovies);
+  // //   }
+  // }, [user.favorites, token]);
+
+  const favoriteMovies = user.favorites;
 
   const handleEditModalOpen = () => setShowEditModal(true);
   const handleEditModalClose = () => setShowEditModal(false);
@@ -110,7 +193,10 @@ export const ProfileView = ({ onUserUpdate, onLoggedOut }) => {
       <p>Username: {user.username}</p>
       <p>Email: {user.email}</p>
       <p>Birthday: {user.birthday ? new Date(user.birthday).toISOString().split('T')[0] : 'Not specified'}</p>
-      <p>Favorites: {user.favorites.join(", ")}</p>
+
+      <h3>Favorite Movies</h3>
+
+      <p>{user.favorites.join(", ")}</p>
       <Button variant="primary" onClick={handleEditModalOpen}>Edit Profile</Button>
 
       <Button variant="warning" onClick={handleDeregister}>Deregister</Button>
@@ -185,6 +271,14 @@ ProfileView.propTypes = {
     birthday: PropTypes.string,
     favorites: PropTypes.arrayOf(PropTypes.string)
   }).isRequired,
+  movies: PropTypes.arrayOf({
+    _id: PropTypes.string,
+    Title: PropTypes.string.isRequired,
+    Description: PropTypes.string,
+    Genre: PropTypes.string,
+    Director: PropTypes.string,
+    Featured: PropTypes.bool
+  }),
   onUserUpdate: PropTypes.func.isRequired,
   onLoggedOut: PropTypes.func.isRequired
 };

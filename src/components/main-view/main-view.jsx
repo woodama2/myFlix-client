@@ -43,6 +43,7 @@ export const MainView = () => {
 
       setMovies(moviesFromApi);
     });
+    
   }, [token]);
 
 const handleUserUpdate = (updatedUser) => {
@@ -102,9 +103,10 @@ return (
             path="/profile"
             element={
               !user ? <Navigate to="/login" replace /> : (
-                <Col md={8}>
+                <Col  md={8}>
                   <ProfileView 
                   user={user} 
+                  movies={movies}
                   onUserUpdate={handleUserUpdate} 
                   onLoggedOut={handleLogout} />
                 </Col>
