@@ -13201,4 +13201,9 @@ textarea.form-control-lg {
   border-radius: 4px;
   padding: 4px 12px;
 }
+
+.card-container {
+  margin: 10px;
+  display: inline-block;
+}
 /*# sourceMappingURL=index.2212206d.css.map */

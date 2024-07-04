@@ -3,6 +3,7 @@ import React, {useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Card, Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import './profile-view.css'
 
 
 // Helper function to format date
@@ -114,7 +115,12 @@ export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
   // //   }
   // }, [user.favorites, token]);
 
-  const favoriteMovies = user.favorites;
+  // const favoriteMovies = user.favorites;
+
+  const favMovies = 
+  user &&
+  movies &&
+  movies.filter((movie) => user.favorites.includes(movie.id));
 
   const handleEditModalOpen = () => setShowEditModal(true);
   const handleEditModalClose = () => setShowEditModal(false);
@@ -126,6 +132,26 @@ export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+
+    // Hash the password if it's provided and has changed
+    // const updatedFormData = { ...formData };
+    // if (formData.password) {
+    //   updatedFormData.password = bcrypt.hashSync(formData.password, 10);
+    // }
+
+    // // Ensure password is hashed before sending to backend
+    // const hashedPassword = formData.password
+    // ? userSchema.statics.hashPassword(formData.password)
+    // : undefined;
+
+    // // Prepare updated user data with hashed password
+    // const updatedUserData = {
+    //   username: formData.username,
+    //   email: formData.email,
+    //   birthday: formData.birthday,
+    //   password: hashedPassword, // Include hashed password in update
+    // };
+
     fetch(`https://stark-eyrie-86274-1237014d10af.herokuapp.com/users/${user.username}`, {
       method: "PUT",
       headers: {
@@ -136,8 +162,12 @@ export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
     })
     .then(response => response.json())
     .then(updatedUser => {
+      console.log("Updated User:", updatedUser); // Log the updated user object
       if (updatedUser) {
+        // Store updated user in localStorage
         localStorage.setItem('user', JSON.stringify(updatedUser));
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        console.log("Stored User:", storedUser); // Log the user data stored in localStorage
         alert("Your profile has been updated successfully.");
         onUserUpdate(updatedUser); // Update state in MainView
         handleEditModalClose();
@@ -146,7 +176,7 @@ export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
       }
     })
     .catch(error => {
-      console.error("Error", error);
+      console.error("Error updating profile:", error); // Log the specific error
       alert("An error occurred while updating your profile.");
     });
   };
@@ -187,6 +217,22 @@ export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
     }
   };
 
+  const removeFav = (movieId) => {
+    fetch(`https://stark-eyrie-86274-1237014d10af.herokuapp.com/users/${user.username}/${encodeURIComponent(movieId)}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+    })
+      .then((response) => response.json())
+      .then((updatedUser) => {
+        onUserUpdate(updatedUser);
+        alert("Movie removed from favorites");
+      })
+      .catch(e => console.log(e));
+  };
+
   return (
     <div>
       <h2>My Profile</h2>
@@ -196,7 +242,30 @@ export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
 
       <h3>Favorite Movies</h3>
 
-      <p>{user.favorites.join(", ")}</p>
+      {favMovies && 
+      favMovies.map((movie) => {
+        return (
+          <div className="card-container" key={movie.id}>
+          <Card className="h-100" style={{width: '12rem '}}>
+            <Card.Img variant="top" src={movie.Image} />
+            <Card.Body>
+              <Card.Title>{movie.Title}</Card.Title>
+              <Card.Text>{movie.Genre}</Card.Text>
+            </Card.Body>
+            <Card.Footer>
+              <Button variant="outline-secondary" onClick={() => removeFav(movie.id)}>Remove from Favorites</Button>
+            </Card.Footer>
+          </Card>
+          </div>
+          // <div onClick={() => {onMovieClick(movie);}}>{movie.Title}</div>
+        );
+
+
+        return <p>{movie.Title}</p>
+      })}
+
+      {/* <p>{user.favorites.join(", ")}</p> */}
+      <p></p>
       <Button variant="primary" onClick={handleEditModalOpen}>Edit Profile</Button>
 
       <Button variant="warning" onClick={handleDeregister}>Deregister</Button>
@@ -271,14 +340,12 @@ ProfileView.propTypes = {
     birthday: PropTypes.string,
     favorites: PropTypes.arrayOf(PropTypes.string)
   }).isRequired,
-  movies: PropTypes.arrayOf({
+  movies: PropTypes.arrayOf(PropTypes.shape({
     _id: PropTypes.string,
     Title: PropTypes.string.isRequired,
-    Description: PropTypes.string,
+    Image: PropTypes.string.isRequired,
     Genre: PropTypes.string,
-    Director: PropTypes.string,
-    Featured: PropTypes.bool
-  }),
+  })).isRequired,
   onUserUpdate: PropTypes.func.isRequired,
   onLoggedOut: PropTypes.func.isRequired
 };
