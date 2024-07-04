@@ -7,6 +7,8 @@ export const MovieCard = ({movie, onMovieClick, onUserUpdate }) => {
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
 
+  const isFavorite = user.favorites.includes(movie.id);
+
   const addFav = (e) => {
     e.preventDefault();
     fetch(`https://stark-eyrie-86274-1237014d10af.herokuapp.com/users/${user.username}/${encodeURIComponent(movie.id)}`, {
@@ -59,8 +61,11 @@ export const MovieCard = ({movie, onMovieClick, onUserUpdate }) => {
         </Link>
       </Card.Body>
       <Card.Footer>
-        <Button variant="outline-primary" onClick={addFav}>Add to Favorites</Button>
-        <Button variant="outline-secondary" onClick={removeFav}>Remove from Favorites</Button>
+        { isFavorite ? (
+          <Button variant="outline-secondary" onClick={removeFav}>Remove from Favorites</Button>
+        ) : (
+          <Button variant="outline-primary" onClick={addFav}>Add to Favorites</Button>
+        )}
       </Card.Footer>
     </Card>
     // <div onClick={() => {onMovieClick(movie);}}>{movie.Title}</div>
