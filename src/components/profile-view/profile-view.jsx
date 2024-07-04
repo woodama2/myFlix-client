@@ -125,6 +125,9 @@ export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
   const handleEditModalOpen = () => setShowEditModal(true);
   const handleEditModalClose = () => setShowEditModal(false);
 
+
+  // Edit Profile Form
+  
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -192,6 +195,7 @@ export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
     onLoggedOut(); // Should clear localStorage
     navigate("/login") // Redirect to login page
   }
+
 
 
     if (confirmDeregister) {
