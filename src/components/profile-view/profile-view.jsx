@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Button, Form, Row, Col, Alert, Modal } from "react-bootstrap";
 
-export const ProfileView = ({ user, onLoggedOut, onUserUpdate, onUserDelete, token }) => {
+export const ProfileView = ({ user, movies, onLoggedOut, onUserUpdate, onUserDelete, token }) => {
   const [username, setUsername] = useState(user.username);
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState(user.email);
