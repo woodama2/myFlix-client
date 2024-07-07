@@ -7,7 +7,7 @@ export const MovieCard = ({movie, onMovieClick, onUserUpdate }) => {
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
 
-  const isFavorite = user.favorites.includes(movie.id);
+  const isFavorite = user?.favorites?.includes(movie.id);
 
   const addFav = (e) => {
     e.preventDefault();

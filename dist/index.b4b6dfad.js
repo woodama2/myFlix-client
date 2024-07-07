@@ -27740,7 +27740,7 @@ var _reactRouterDom = require("react-router-dom");
 const MovieCard = ({ movie, onMovieClick, onUserUpdate })=>{
     const token = localStorage.getItem("token");
     const user = JSON.parse(localStorage.getItem("user"));
-    const isFavorite = user.favorites.includes(movie.id);
+    const isFavorite = user?.favorites?.includes(movie.id);
     const addFav = (e)=>{
         e.preventDefault();
         fetch(`https://stark-eyrie-86274-1237014d10af.herokuapp.com/users/${user.username}/${encodeURIComponent(movie.id)}`, {
@@ -46737,13 +46737,12 @@ const ProfileView = ({ movies, onUserUpdate, onLoggedOut })=>{
     };
     const handleDeregister = ()=>{
         const confirmDeregister = window.confirm("Are you sure you want to delete your account?  This action cannot be undone.");
-        const handleLogout = ()=>{
-            localStorage.removeItem("user");
-            localStorage.removeItem("token");
-            onLoggedOut(); // Should clear localStorage
-            navigate("/login") // Redirect to login page
-            ;
-        };
+        // const handleLogout = () => {
+        //   localStorage.removeItem('user');
+        //   localStorage.removeItem('token');
+        //   onLoggedOut(); // Should clear localStorage
+        //   navigate("/login") // Redirect to login page
+        // }
         if (confirmDeregister) fetch(`https://stark-eyrie-86274-1237014d10af.herokuapp.com/users/${user.username}`, {
             method: "DELETE",
             headers: {
@@ -47100,8 +47099,7 @@ ProfileView.propTypes = {
         Image: (0, _propTypesDefault.default).string.isRequired,
         Genre: (0, _propTypesDefault.default).string
     })),
-    onUserUpdate: (0, _propTypesDefault.default).func.isRequired,
-    onLoggedOut: (0, _propTypesDefault.default).func.isRequired
+    onUserUpdate: (0, _propTypesDefault.default).func.isRequired
 };
 var _c;
 $RefreshReg$(_c, "ProfileView");

@@ -165,12 +165,12 @@ export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
       "Are you sure you want to delete your account?  This action cannot be undone."
     );
   
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    onLoggedOut(); // Should clear localStorage
-    navigate("/login") // Redirect to login page
-  }
+  // const handleLogout = () => {
+  //   localStorage.removeItem('user');
+  //   localStorage.removeItem('token');
+  //   onLoggedOut(); // Should clear localStorage
+  //   navigate("/login") // Redirect to login page
+  // }
 
 
 
@@ -327,5 +327,4 @@ ProfileView.propTypes = {
     Genre: PropTypes.string,
   })),
   onUserUpdate: PropTypes.func.isRequired,
-  onLoggedOut: PropTypes.func.isRequired
 };
