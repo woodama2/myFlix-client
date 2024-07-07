@@ -11,6 +11,11 @@ export const ProfileView = ({ user, onLoggedOut, onUserUpdate, onUserDelete, tok
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const favMovies = 
+  user &&
+  movies &&
+  movies.filter((movie) => user.favorites.includes(movie.id));
+
 
   useEffect(() => {
     if (user.birthday) {
@@ -60,7 +65,7 @@ export const ProfileView = ({ user, onLoggedOut, onUserUpdate, onUserDelete, tok
           <Form.Group controlId="formPassword">
             <Form.Label>Password</Form.Label>
             <Form.Control
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               minLength={8}
@@ -107,6 +112,31 @@ export const ProfileView = ({ user, onLoggedOut, onUserUpdate, onUserDelete, tok
             </Button>
           </Modal.Footer>
         </Modal>
+        <hr className="profile-divider" />
+        <h3>Favorite Movies</h3>
+
+        {favMovies &&
+        favMovies.map((movie) => {
+          return (
+            <div className="card-container" key={movie.id}>
+              <Card className="mb-4" md={4}>
+                <Card.Img variant="top" src={movie.Image} />
+                <Card.Body>
+                  <Card.Title>{movie.Title}</Card.Title>
+                  <Card.Text>{movie.Genre}</Card.Text>
+                </Card.Body>
+                <Card.Footer>
+                  <Button variant="outline-secondary" onClick={() => removeFav(movie.id)}>Remove from Favorites</Button>
+                </Card.Footer>
+              </Card>
+            </div>
+          );
+
+          return <p>{movie.Title}</p>
+        })}
+
+        <p></p>
+
       </Col>
     </Row>
   );
@@ -117,7 +147,14 @@ ProfileView.propTypes = {
     username: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
     birthday: PropTypes.string,
+    favorites: PropTypes.arrayOf(PropTypes.string)
   }).isRequired,
+  movies: PropTypes.arrayOf(PropTypes.shape({
+    _is: PropTypes.string,
+    Title: PropTypes.string.isRequired,
+    Image: PropTypes.string.isRequired,
+    Genre: PropTypes.string,
+  })),
   onLoggedOut: PropTypes.func.isRequired,
   onUserUpdate: PropTypes.func.isRequired,
   onUserDelete: PropTypes.func.isRequired,
