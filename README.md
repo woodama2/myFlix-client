@@ -6,7 +6,7 @@ The **myFlix** project is a single-page, responsive application built using Reac
 
 ## Table of Contents
 
-- [Project Overview] (#project-overview)
+- [Project Overview](#project-overview)
 - [Features](#features)
 - [User Stories](#user-stories)
 - [Setup and Installation](#setup-and-installation)
