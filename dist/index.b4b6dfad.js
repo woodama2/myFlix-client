@@ -46821,7 +46821,7 @@ const ProfileView = ({ movies, onUserUpdate, onLoggedOut })=>{
                 return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                     className: "card-container",
                     children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Card), {
-                        className: "mb-4",
+                        className: "h-5",
                         md: 4,
                         children: [
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Card).Img, {

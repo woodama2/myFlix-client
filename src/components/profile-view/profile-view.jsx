@@ -225,7 +225,7 @@ export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
       favMovies.map((movie) => {
         return (
           <div className="card-container" key={movie.id}>
-          <Card className="mb-4" md={4}>
+          <Card className="h-5" md={4}>
             <Card.Img variant="top" src={movie.Image} />
             <Card.Body>
               <Card.Title>{movie.Title}</Card.Title>
