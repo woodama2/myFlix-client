@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Card, Button, Form, Row, Col, Alert, Modal } from "react-bootstrap";
+import './profile-view.css';
 
 export const ProfileView = ({ user, movies, onLoggedOut, onUserUpdate, onUserDelete, token }) => {
   const [username, setUsername] = useState(user.username);
@@ -44,6 +45,22 @@ export const ProfileView = ({ user, movies, onLoggedOut, onUserUpdate, onUserDel
     if (success) {
       onLoggedOut();
     }
+  };
+
+  const removeFav = (movieId) => {
+    fetch(`https://stark-eyrie-86274-1237014d10af.herokuapp.com/users/${user.username}/${encodeURIComponent(movieId)}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+    })
+      .then((response) => response.json())
+      .then((updatedUser) => {
+        onUserUpdate(updatedUser);
+        alert("Movie removed from favorites");
+      })
+      .catch(e => console.log(e));
   };
 
   return (
@@ -119,7 +136,7 @@ export const ProfileView = ({ user, movies, onLoggedOut, onUserUpdate, onUserDel
         favMovies.map((movie) => {
           return (
             <div className="card-container" key={movie.id}>
-              <Card className="mb-4" md={4}>
+              <Card className="h-100" md={4}>
                 <Card.Img variant="top" src={movie.Image} />
                 <Card.Body>
                   <Card.Title>{movie.Title}</Card.Title>
