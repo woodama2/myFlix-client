@@ -1,52 +1,201 @@
-import React, { useState, useEffect } from "react";
+// src/components/profile-view/profile-view.jsx
+import React, {useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { Card, Button, Form, Row, Col, Alert, Modal } from "react-bootstrap";
-import './profile-view.css';
+import { Card, Button, Col, Row, Form, Modal } from "react-bootstrap";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import './profile-view.css'
 
-export const ProfileView = ({ user, movies, onLoggedOut, onUserUpdate, onUserDelete, token }) => {
-  const [username, setUsername] = useState(user.username);
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState(user.email);
-  const [birthday, setBirthday] = useState("");
-  const [updateMessage, setUpdateMessage] = useState("");
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+// Helper function to format date
+// const formatDate = (dateString) => {
+//   const date = new Date(dateString);
+//   const month = String(date.getMonth() + 1).padStart(2, '0');
+//   const day = String(date.getDate()).padStart(2, '0');
+//   const year = date.getFullYear();
+//   return `${month}/${day}/${year}`;
+// };
+
+export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const { movieId } = useParams();
+  // const user = JSON.parse(localStorage.getItem("user"));
+
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [formData, setFormData] = useState({
+    username: user.username,
+    password: "",
+    email: user.email,
+    birthday: user.birthday ? new Date(user.birthday).toISOString().split('T')[0] : '' // Extract date part only
+  });
   const [showPassword, setShowPassword] = useState(false);
+  // const [favoriteMovies, setFavoriteMovies] = useState([]);
 
-  const favMovies = 
+  // const favoriteMovies = movies.filter(m => user.favorites.includes(m._id));
+
+  // useEffect(() => {
+  //   const fetchFavoriteMovies = async () => {
+  //     if (user.favorites.length > 0) {
+  //       try {
+  //         const promises = user.favorites.map((movieId) =>
+  //       fetch(`https://stark-eyrie-86274-1237014d10af.herokuapp.com/movies/`, {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       })
+  //       .then(response => {
+  //         if (!response.ok) {
+  //           throw new Error('Failed to fetch movie');
+  //         }
+  //         return response.json();
+  //       })
+  //       .catch(error => {
+  //         console.error("Error fetching movie detauls:", error);
+  //         return null;
+  //       })
+  //     );
+  //     const movieDetails = await Promise.all(promises);
+  //     setFavoriteMovies(movieDetails.filter(movie => movie !== null));
+  //       } catch (error) {
+  //         console.error("Error fetching movie details:", error);
+  //       }
+  //     }
+  //   };
+
+  //   fetchFavoriteMovies();
+  // }, [user.favorites, token]);
+
+  // useEffect(() => {
+  //   if (user.favorites.length > 0) {
+  //     // Map the array of movie IDs to fetch requests
+  //     const fetchPromises = user.favorites.map((movieId) =>
+  //   fetch(`https://stark-eyrie-86274-1237014d10af.herokuapp.com/movies/${encodeURIComponent(movieId)}`, {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     }
+  //   })
+  //   .then(response => {
+  //     if (!response.ok) {
+  //       throw new Error('Failed to fetch movie');
+  //     }
+  //     return response.json();
+  //   })
+  //   .catch(error => {
+  //     console.error("Error fetching movie details:", error);
+  //     return null;
+  //   })
+  // );
+
+  // Execute all fetch requests and handle them together
+  // const movieDetails = await Promise.all(fetchPromises)
+  // .then((movieDetails) => {
+  //   // Filter out any null responses
+  //   const filteredMovies = movieDetails.filter(movie => movie !== null);
+  //   // Update state with all fetch movies at once
+  //   setFavoriteMovies(filteredMovies);
+  // })
+  // .catch((error) => {
+  //   console.error("Error fetching movies:", error);
+  // });
+  //   } else {
+  //     // If user has no favorites, set favoriteMovies to an empty array
+  //     setFavoriteMovies([]);
+  //   }
+
+  // //     Promise.all(user.favorites.map((movieId) =>
+  // //   fetch(`https://stark-eyrie-86274-1237014d10af.herokuapp.com/movies/`, {
+  // //     headers: {
+  // //       Authorization: `Bearer ${token}`,
+  // //     }
+  // //   })
+  // //   .then((response) => response.json())
+  // //   .catch((error) => console.error("Error fetching movie details:", error))
+  // // )).then(setFavoriteMovies);
+  // //   }
+  // }, [user.favorites, token]);
+
+  // const favoriteMovies = user.favorites;
+
+  const favMovies =
   user &&
   movies &&
   movies.filter((movie) => user.favorites.includes(movie.id));
 
+  const handleEditModalOpen = () => setShowEditModal(true);
+  const handleEditModalClose = () => setShowEditModal(false);
 
-  useEffect(() => {
-    if (user.birthday) {
-      setBirthday(new Date(user.birthday).toISOString().split('T')[0]);
-    }
-  }, [user.birthday]);
 
-  const handleUpdate = async () => {
-    const updatedUser = {
-      username: username,
-      email: email,
-      birthday: birthday,
-    };
-    if (password) {
-      updatedUser.password = password;
-    }
-    const success = await onUserUpdate(updatedUser);
-    if (success) {
-      setUpdateMessage('User updated successfully!');
-      setTimeout(() => setUpdateMessage(''), 3000);
-    }
+  // Edit Profile Form
+  
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleDelete = async () => {
-    const success = await onUserDelete(user.username);
-    if (success) {
-      onLoggedOut();
-    }
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    fetch(`https://stark-eyrie-86274-1237014d10af.herokuapp.com/users/${user.username}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(updatedUser => {
+      if (updatedUser) {
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        alert("Your profile has been updated successfully.");
+        onUserUpdate(updatedUser); // Update state in MainView
+        handleEditModalClose();
+      } else {
+        alert("An error occurred while updating your profile.");
+      }
+    })
+    .catch(error => {
+      console.error("Error", error);
+      alert("An error occurred while updating your profile.");
+    });
   };
 
+  const handleDeregister = () => {
+    const confirmDeregister = window.confirm(
+      "Are you sure you want to delete your account?  This action cannot be undone."
+    );
+  
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    onLoggedOut(); // Should clear localStorage
+    navigate("/login") // Redirect to login page
+  }
+
+
+
+    if (confirmDeregister) {
+      fetch(`https://stark-eyrie-86274-1237014d10af.herokuapp.com/users/${user.username}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+      })
+      .then((response) => {
+        if (response.ok) {
+          alert("Your account has been successfully deleted.");
+          onLoggedOut();
+          navigate("/login");
+        } else {
+          alert("An error occurred while trying to delete your account.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while trying to delete your account.");
+      });
+    }
+  };
   const removeFav = (movieId) => {
     fetch(`https://stark-eyrie-86274-1237014d10af.herokuapp.com/users/${user.username}/${encodeURIComponent(movieId)}`, {
       method: "DELETE",
@@ -64,98 +213,103 @@ export const ProfileView = ({ user, movies, onLoggedOut, onUserUpdate, onUserDel
   };
 
   return (
-    <Row>
-      <Col md={6}>
-        <h2 className="profile-title">My Profile</h2>
-        <hr className="profile-divider" />
-        {updateMessage && <Alert variant="success">{updateMessage}</Alert>}
-        <Form>
-          <Form.Group controlId="formUsername">
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              minLength={3}
-            />
-          </Form.Group>
-          <Form.Group controlId="formPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              minLength={8}
-            />
-          </Form.Group>
-          <Form.Group controlId="formEmail">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group controlId="formBirthday">
-            <Form.Label>Birthday</Form.Label>
-            <Form.Control
-              type="date"
-              value={birthday}
-              onChange={(e) => setBirthday(e.target.value)}
-            />
-          </Form.Group>
-          <br></br>
-          <Button variant="primary" onClick={handleUpdate} className="me=2">
-            Update
-          </Button>
-          <Button variant="outline-danger" onClick={() => setShowDeleteModal(true)}>
-            Delete Account
-          </Button>
-        </Form>
+    <div>
+      <h2>My Profile</h2>
+      <p>Username: {user.username}</p>
+      <p>Email: {user.email}</p>
+      <p>Birthday: {user.birthday ? new Date(user.birthday).toISOString().split('T')[0] : 'Not specified'}</p>
 
-        <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} className="custom-modal">
-          <Modal.Header closeButton>
-            <Modal.Title>Deleting Confirmation</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            Are you sure you want to delete this account?  This action cannot be undone.
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="light" onClick={() => setShowDeleteModal(false)}>
-              Close
-            </Button>
-            <Button variant="outline-danger" onClick={handleDelete}>
-              Delete
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <hr className="profile-divider" />
-        <h3>Favorite Movies</h3>
+      <h3>Favorite Movies</h3>
 
-        {favMovies &&
-        favMovies.map((movie) => {
-          return (
-            <div className="card-container" key={movie.id}>
-              <Card className="h-100" md={4}>
-                <Card.Img variant="top" src={movie.Image} />
-                <Card.Body>
-                  <Card.Title>{movie.Title}</Card.Title>
-                  <Card.Text>{movie.Genre}</Card.Text>
-                </Card.Body>
-                <Card.Footer>
-                  <Button variant="outline-secondary" onClick={() => removeFav(movie.id)}>Remove from Favorites</Button>
-                </Card.Footer>
-              </Card>
-            </div>
-          );
+      {favMovies && 
+      favMovies.map((movie) => {
+        return (
+          <div className="card-container" key={movie.id}>
+          <Card className="mb-4" md={4}>
+            <Card.Img variant="top" src={movie.Image} />
+            <Card.Body>
+              <Card.Title>{movie.Title}</Card.Title>
+              <Card.Text>{movie.Genre}</Card.Text>
+            </Card.Body>
+            <Card.Footer>
+              <Button variant="outline-secondary" onClick={() => removeFav(movie.id)}>Remove from Favorites</Button>
+            </Card.Footer>
+          </Card>
+          </div>
+          // <div onClick={() => {onMovieClick(movie);}}>{movie.Title}</div>
+        );
 
-          return <p>{movie.Title}</p>
-        })}
 
-        <p></p>
+        return <p>{movie.Title}</p>
+      })}
 
-      </Col>
-    </Row>
+      {/* <p>{user.favorites.join(", ")}</p> */}
+      <p></p>
+
+      <Button variant="primary" onClick={handleEditModalOpen}>Edit Profile</Button>
+
+      <Button variant="warning" onClick={handleDeregister}>Deregister</Button>
+
+      <Modal show={showEditModal} onHide={handleEditModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Profile</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleFormSubmit}>
+            <Form.Group controlId="formUsername">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleFormChange}
+                required
+                minLength={3}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type={showPassword ? "text" : "password"}
+                id="passwordInput"
+                name="password"
+                value={formData.password}
+                onChange={handleFormChange}
+                required
+                minLength={8}
+              />
+              <Form.Check
+                type="checkbox"
+                label="Show Password"
+                id="showPasswordCheck"
+                checked={showPassword}
+                onChange={() => setShowPassword(!showPassword)}
+              />
+            </Form.Group>
+            <Form.Group controlId="formEmail">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleFormChange}
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId="formBirthday">
+              <Form.Label>Birthday</Form.Label>
+              <Form.Control
+                type="date"
+                name="birthday"
+                value={formData.birthday}
+                onChange={handleFormChange}
+              />
+            </Form.Group>
+            <Button variant="primary" type="submit">Save Changes</Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    </div>
   );
 };
 
@@ -167,13 +321,11 @@ ProfileView.propTypes = {
     favorites: PropTypes.arrayOf(PropTypes.string)
   }).isRequired,
   movies: PropTypes.arrayOf(PropTypes.shape({
-    _is: PropTypes.string,
+    _id: PropTypes.string,
     Title: PropTypes.string.isRequired,
     Image: PropTypes.string.isRequired,
     Genre: PropTypes.string,
   })),
-  onLoggedOut: PropTypes.func.isRequired,
   onUserUpdate: PropTypes.func.isRequired,
-  onUserDelete: PropTypes.func.isRequired,
-  token: PropTypes.string.isRequired,
+  onLoggedOut: PropTypes.func.isRequired
 };
