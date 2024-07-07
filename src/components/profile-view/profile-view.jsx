@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Button, Form, Row, Col, Alert, Modal } from "react-bootstrap";
+import { Card, Button, Form, Row, Col, Alert, Modal } from "react-bootstrap";
 
 export const ProfileView = ({ user, movies, onLoggedOut, onUserUpdate, onUserDelete, token }) => {
   const [username, setUsername] = useState(user.username);
