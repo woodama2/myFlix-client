@@ -8,6 +8,7 @@ import { NavigationBar } from "../navigation-bar/navigation-bar";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 export const MainView = () => {
@@ -17,6 +18,7 @@ export const MainView = () => {
   // const [selectedMovie, setSelectedMovie] = useState(null);
   const [user, setUser] = useState(storedUser? storedUser : null);
   const [token, setToken] = useState(storedToken? storedToken : null);
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
 
   useEffect(() => {
     if (!token) {
@@ -58,6 +60,10 @@ const handleLogout = () => {
   onLoggedOut(); // Call this to propagate logout across components
 };
 
+const filteredMovies = movies.filter((movie) => 
+  movie.Title.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
 return (
   <BrowserRouter>
     <NavigationBar
@@ -69,6 +75,13 @@ return (
     }}
     />
     <Row className="justify-content-md-center">
+      <Form.Control
+      type="text"
+      placeholder="Search for a movie"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+      className="mb-4"
+      />
       <Routes>
         <Route
         path="/signup"
@@ -137,11 +150,11 @@ return (
           <>
             {!user ? (
               <Navigate to="/login" replace />
-            ) : movies.length === 0 ? (
-              <Col>The list is empty!</Col>
+            ) : filteredMovies.length === 0 ? (
+              <Col>No movies found!</Col>
             ) : (
               <>
-                {movies.map((movie) => (
+                {filteredMovies.map((movie) => (
                   <Col className="mb-4" key={movie.id} md={3}>
                     <MovieCard 
                     movie={movie} 
