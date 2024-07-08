@@ -221,9 +221,8 @@ export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
 
       <h3>My Favorite Movies</h3>
 
-      {favMovies && 
-      favMovies.map((movie) => {
-        return (
+      {favMovies && favMovies.length > 0 ? (
+        favMovies.map((movie) => (
           <div className="card-container" key={movie.id}>
           <Card className="h-100" md={4}>
             <Card.Img variant="top" src={movie.Image} className="card-img-top"/>
@@ -237,11 +236,10 @@ export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
           </Card>
           </div>
           // <div onClick={() => {onMovieClick(movie);}}>{movie.Title}</div>
-        );
-
-
-        return <p>{movie.Title}</p>
-      })}
+        )) 
+      ) : (
+        <p>None Selected</p>
+      )}
 
       {/* <p>{user.favorites.join(", ")}</p> */}
       <p></p>
