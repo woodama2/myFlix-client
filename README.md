@@ -19,7 +19,8 @@ The **myFlix** project is a single-page, responsive application built using Reac
 ### Views & Features
 
 - **Main View:**
-    - Returns all movies to the user (each movie item with an image, title, and genre).
+    - Returns ALL movies to the user (each movie item with an image, title, and genre).
+    - Filtering the list of movies with a "search" feature.
     - Ability to select a movie for more details.
     - Ability to log out.
     - Ability to navigate to Profile View.
@@ -33,7 +34,7 @@ The **myFlix** project is a single-page, responsive application built using Reac
     - Allows users to log in with a username and password.
 
 - **Signup View:**
-    - Allows new users to register (username, password, email).
+    - Allows new users to register (username, password, email, date of birth).
 
 - **Profile View:**
     - Displays user registration details.
