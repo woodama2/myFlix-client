@@ -9,7 +9,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 export const MainView = () => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -60,28 +60,37 @@ const handleLogout = () => {
   onLoggedOut(); // Call this to propagate logout across components
 };
 
+const location = useLocation(); // Get the current route
+
 const filteredMovies = movies.filter((movie) => 
   movie.Title.toLowerCase().includes(searchQuery.toLowerCase())
 );
 
 return (
-  <BrowserRouter>
-    <NavigationBar
-    user={user}
-    onLoggedOut={() => {
-      setUser(null);
-      setToken(null);
-      localStorage.clear();
-    }}
-    />
-    <Row className="justify-content-md-center">
-      <Form.Control
-      type="text"
-      placeholder="Search for a movie"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-      className="mb-4"
+  <>
+  <Row className="justify-content-md-center">
+      <Col>
+      <NavigationBar
+      user={user}
+      onLoggedOut={() => {
+        setUser(null);
+        setToken(null);
+        localStorage.clear();
+      }}
       />
+        {location.pathname === "/" && ( // Only show search on the main movie list
+          <Form.Control
+            type="text"
+            placeholder="Search for a movie"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="mb-4"
+          />
+
+        )}
+      </Col>
+  </Row>
+  <Row className="justify-content-md-center">
       <Routes>
         <Route
         path="/signup"
@@ -106,7 +115,7 @@ return (
               <Navigate to="/" />
             ) : (
               <Col md={5}>
-                <LoginView onLoggedIn={(user, token) => {setUser(user); setToken(token)}}/>
+                <LoginView onLoggedIn={(user, token) => {setUser(user); setToken(token);}}/>
               </Col>
             )}
           </>
@@ -155,7 +164,7 @@ return (
             ) : (
               <>
                 {filteredMovies.map((movie) => (
-                  <Col className="mb-4" key={movie.id} md={3}>
+                  <Col className="mb-4" key={movie.id} xs={6} lg={3}>
                     <MovieCard 
                     movie={movie} 
                     user={user} 
@@ -170,7 +179,7 @@ return (
         {/* <Button onClick={() => {setUser(null); setToken(null); localStorage.clear();}}>Logout</Button> */}
       </Routes>
     </Row>
-  </BrowserRouter>
+  </>
 );
 
 
