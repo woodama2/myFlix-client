@@ -6,6 +6,7 @@ export const SignupView = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [birthday, setBirthday] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (event) => {
@@ -15,6 +16,7 @@ export const SignupView = () => {
       username: username,
       password: password,
       email: email,
+      birthday: birthday,
     };
 
     fetch("https://stark-eyrie-86274-1237014d10af.herokuapp.com/users", {
@@ -95,6 +97,15 @@ export const SignupView = () => {
         id="showPasswordCheck"
         checked={showPassword}
         onChange={() => setShowPassword(!showPassword)}
+        />
+      </Form.Group>
+      <Form.Group controlId="formBirthday">
+        <Form.Label>Birthday</Form.Label>
+        <Form.Control
+        type="date"
+        name="birthday"
+        value={birthday}
+        onChange={(e) => setBirthday(e.target.value)}
         />
       </Form.Group>
       <Form.Group controlId="formEmail">

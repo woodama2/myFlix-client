@@ -219,7 +219,7 @@ export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
       <p>Email: {user.email}</p>
       <p>Birthday: {user.birthday ? new Date(user.birthday).toISOString().split('T')[0] : 'Not specified'}</p>
 
-      <h3>Favorite Movies</h3>
+      <h3>My Favorite Movies</h3>
 
       {favMovies && 
       favMovies.map((movie) => {
