@@ -225,13 +225,13 @@ export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
       favMovies.map((movie) => {
         return (
           <div className="card-container" key={movie.id}>
-          <Card className="h-5" md={4}>
-            <Card.Img variant="top" src={movie.Image} />
-            <Card.Body>
-              <Card.Title>{movie.Title}</Card.Title>
+          <Card className="h-100" md={4}>
+            <Card.Img variant="top" src={movie.Image} className="card-img-top"/>
+            <Card.Body className="card-body">
+              <Card.Title className="card-title">{movie.Title}</Card.Title>
               <Card.Text>{movie.Genre}</Card.Text>
             </Card.Body>
-            <Card.Footer>
+            <Card.Footer className="card-footer">
               <Button variant="outline-secondary" onClick={() => removeFav(movie.id)}>Remove from Favorites</Button>
             </Card.Footer>
           </Card>
@@ -246,7 +246,7 @@ export const ProfileView = ({ movies, onUserUpdate, onLoggedOut }) => {
       {/* <p>{user.favorites.join(", ")}</p> */}
       <p></p>
 
-      <Button variant="primary" onClick={handleEditModalOpen}>Edit Profile</Button>
+      <Button variant="primary" onClick={handleEditModalOpen} className="me-2">Edit Profile</Button>
 
       <Button variant="warning" onClick={handleDeregister}>Deregister</Button>
 

@@ -1,4 +1,38 @@
-.card-container {
+/* .card-container {
   display: inline-block;
   margin: 10px;
+} */
+
+/* profile-view.css */
+.card-container {
+  display: inline-block;
+  justify-content: center;
+  margin: 10px; /* Adjust as needed */
+}
+
+.card-container .card {
+  width: 18rem; /* Adjust the width as needed */
+  height: 32rem; /* Adjust the height as needed */
+  display: flex;
+  flex-direction: column;
+}
+
+.card-container .card img {
+  height: 24rem; /* Adjust as needed for image height */
+  object-fit: fit; /* Ensures the image covers the area */
+}
+
+.card-container .card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-container .card-footer {
+  height: 4rem; /* Fixed height for footer */
+}
+
+.card-container .card-title {
+  font-size: large;
 }
